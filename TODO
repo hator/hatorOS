@@ -1,0 +1,8 @@
+Interrup Descriptor Table
+	kernel panic (INT 0x20)
+	syscall (INT 0x80)
+Memory allocator
+Paging
+DMA ATA driver
+Process execution
+Multitasking

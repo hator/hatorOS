@@ -1,8 +1,20 @@
-Interrup Descriptor Table
+GDT
+Memory management
+	Paging
+Interrupt Descriptor Table
 	kernel panic (INT 0x20)
 	syscall (INT 0x80)
 Memory allocator
-Paging
+	malloc, free syscalls
 DMA ATA driver
 Process execution
+	launching
+	pid
+	forks
 Multitasking
+	saving states
+	round robin
+	priorities
+LibC
+Init
+Shell

@@ -2,10 +2,12 @@ CC=gcc
 LD=ld
 EM=qemu-system-i386
 
-CFLAGS=-Wall -Wextra -O2 -fno-builtin -nostdlib -I$(INCLUDE_DIR)/
+INCLUDE_DIR=.
+
+CFLAGS=-Wall -Wextra -O2 -fno-builtin -fno-common -fno-stack-protector -fno-strict-aliasing -nostdinc -nostdlib -I$(INCLUDE_DIR)/
 LFLAGS=-T linker.ld --exclude-lib ALL #--strip-all
 
-KOBJS=loader.o kernel.o
+KOBJS=loader.o kernel.o idt.o util.o
 KFILE=kernel
 
 BASE_IMG=floppy.img
@@ -29,12 +31,18 @@ kernel.o: kernel.c
 loader.o: loader.S
 	$(CC) $(CFLAGS) -c $^ -o $@
 
+idt.o: idt.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+util.o: util.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+
 test:
 	$(EM) -D ./qemu.log -fda $(OUT_IMG)
 
 clean:
 	rm -f *.o
-	umount /media/osimg
-	rm -rf /media/osimg
+
 
 .PHONY: all test clean

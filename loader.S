@@ -17,12 +17,48 @@ MultibootHeader:
 
 // infinite loop
 loader:
-//	movl %eax, %ecx
-//	call kmain
-	mov $0xb8000, %eax
-	movb $0x41, (%eax)
-	movb $0x1b, 1(%eax)
-	
-	
-	cli
-	_loop: hlt; jmp _loop
+	// TRICK: GDT with base 0x40000000 for code(0x08) and data(0x10)
+	lgdt (_trickgdt)
+	movw $0x10, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movw %ax, %gs
+	movw %ax, %ss
+	jmp $0x08,$_higherhalf
+
+_higherhalf:
+	mov _sys_stack, %esp
+
+	call kmain
+
+	__loop: hlt; jmp __loop
+
+.global gdt_flush
+gdt_flush:
+	lgdt (gp)
+	movw $0x10, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movw %ax, %gs
+	movw %ax, %ss
+	jmp $0x08,$_flush2
+
+_flush2:
+	ret
+
+.section .setup
+_trickgdt:
+	.word _gdt_end - _gdt - 1 //size of the GDT
+	.long _gdt 		  //linear address of the GDT
+_gdt:
+	.long 0
+	.long 0
+	.byte 0xFF, 0xFF, 0, 0, 0, 0b10011010, 0b11001111, 0x40 //code seg
+	.byte 0xFF, 0xFF, 0, 0, 0, 0b10010010, 0b11001111, 0x40 //data seg
+_gdt_end:
+
+.section .bss
+.lcomm _sys_stack_start 0x1000
+_sys_stack:

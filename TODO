@@ -16,5 +16,6 @@ Multitasking
 	round robin
 	priorities
 LibC
+Inter Process Comunication IPC
 Init
 Shell

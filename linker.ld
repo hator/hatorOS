@@ -1,35 +1,37 @@
-OUTPUT_FORMAT("elf32-i386")
+OUTPUT_FORMAT(elf32-i386)
 ENTRY(loader)
 
-virt = 0xC0000000; /* 3 gig */
-phys = 0x100000; /* 1 meg */
+phys = 0x00100000; /* 1 meg */
 
-SECTIONS
-{
-	. = phys;
-	
+SECTIONS {
+	. = 0xC0100000;
+
 	.setup :
 	{
 		*(.setup)
 	}
-	
-	. += virt;
-	
-	.text virt : AT(ADDR(.text) - virt)
-        {   
-                *(.text)
-	}
-            
-	.data ALIGN(4096) :  AT(ADDR(.data) - virt)
-	{  
-                *(.data)
-                *(.rodata)
+
+	.text ALIGN(0x1000) :
+	{   
+		*(.text)
 	}
 
-	.bss ALIGN(4096) :  AT(ADDR(.bss) - virt)
-        {
-		*(.bss)
+	.rodata ALIGN(0x1000) :
+	{
+		*(.rodata*)
+	}
+
+	.data ALIGN(0x1000) :
+	{  
+		*(.data)
+	}
+
+	.bss :
+	{
+		_sbss = .;
 		*(COMMON)
+		*(.bss)
+		_ebss = .;
 	}
 }
 

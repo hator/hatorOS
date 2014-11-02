@@ -19,8 +19,8 @@ int __attribute__((fastcall)) kmain(void* multiboot_header) {
 	
 //	idt_install(idtp, &idt);
 	
-	init_paging();
-	gdt_install();
+//	init_paging();
+//	gdt_install();
 
 	videoRam[2] = 'B';
 	videoRam[3] = 0x2C;
